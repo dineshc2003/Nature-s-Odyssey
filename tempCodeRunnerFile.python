@@ -1,0 +1,29 @@
+from bs4 import BeautifulSoup
+import requests, openpyxl
+excel = openpyxl.Workbook()
+print(excel.sheetnames)
+sheet = excel.active
+sheet.title = 'IPO'
+
+sheet.append(['Issuer Company', 'Listing Date', 'Issue
+Price', 'Issue Price(Rs cr)', 'TOTAL', 'Open Price', 'Low
+Price', 'High Price', 'Close Price', '% Change'])
+
+source =
+requests.get('https://www.chittorgarh.com/report/ipo_
+report_listing_day_gain/98/')
+source.raise_for_status()
+
+soup = BeautifulSoup(source.text,'html.parser')
+companies = soup.find('tbody').find_all('tr')
+for company in companies:
+name = company.find_all('td')
+
+for a in name:
+data=[a.text for a in name]
+del(data[4:8])
+del(data[1:1])
+
+sheet.append(data)
+
+excel.save("Dinesh_210346_Data.xlsx")
